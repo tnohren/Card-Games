@@ -1,5 +1,4 @@
 # CardandDeck.py
-
 import random
 import itertools
 
@@ -47,4 +46,5 @@ class Hand:
             printhand.append(str(card))
         return '\n'.join(printhand)
 
-        
+    def addCard(self, newCard):
+        self.hd.append(newCard)

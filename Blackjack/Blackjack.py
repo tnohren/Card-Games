@@ -1,10 +1,9 @@
 # Blackjack.py
-from CardandDeck import *
+from CardandDeck.CardandDeck import *
 from blackjack_functionality import *
 
 # This is a simple text-based blackjack game
 # In its current state, it does not handle splitting
-
 def play():
     play = 'yes'
     while(play != 'no'):
@@ -39,7 +38,7 @@ def play():
 
         while (hit != 'stay'):
                # If the player decided to hit, then deal them a new card
-               playerHand.hd.append(deck.draw())
+               playerHand.addCard(deck.draw())
                playerShow(playerHand)
 
                # Re-calculate the player's score
@@ -58,7 +57,7 @@ def play():
         # or as long as dealer hasn't already beaten the player
         while ((dealerScore < 16) and (playerBust == False) and (dealerScore <= playerScore)):
                # Give the dealer a new card
-               dealerHand.hd.append(deck.draw())
+               dealerHand.addCard(deck.draw())
 
                # Print the dealer's current hand with the exception of first card
                dealerShow(dealerHand)

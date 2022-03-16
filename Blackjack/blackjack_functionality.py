@@ -46,7 +46,7 @@ def calcDealerScore(hand):
         elif (card.value > 8):
             dealerScore += 10
         else:
-            dealerScore += card.value
+            dealerScore += card.value + 1
 
     # We need to determine what value to give the aces
     # If the dealer has a score less than 11 - number of aces
