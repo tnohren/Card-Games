@@ -1,5 +1,9 @@
 # Blackjack.py
-from CardandDeck.CardandDeck import *
+import sys
+sys.path.append('./CardandDeck')
+sys.path.append('./Currency')
+from CardandDeck import *
+from CurrencyManagement import * # unused - will use later
 from blackjack_functionality import *
 
 # This is a simple text-based blackjack game
@@ -10,7 +14,7 @@ def play():
         print("NEW GAME STARTED")
 
         # Initializing the deck to play with
-        deck = Deck()
+        deck = Deck(True)
         deck.shuffle()
 
         # Initializing the player's and dealer's hand
@@ -91,7 +95,4 @@ def play():
         # Ask if the player would like to play a new hand
         play = input("Would you like to continue playing? (yes or no) ")
 
-
 play()
-
-               

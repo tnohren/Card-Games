@@ -1,20 +1,26 @@
-from CardandDeck.CardandDeck import *
+# Poker.py
+import sys
+sys.path.append('./CardandDeck')
+from CardandDeck import *
 from PokerFunctionality import *
+from PokerChipFunctionality import *
 
 def play():
-    ongoing = True
-    while (ongoing):
-        print("New Game Started")
+    # Initialize Game State. User will be prompted to load existing game or start a new one
+    game = GameState()
+    play = 'yes'
 
-        # Initializing the deck to play with
-        deck = Deck()
-        deck.shuffle()
+    # Initialize poker chips
+    chips = PokerChipHandler()
 
-        # Deal Hands
-        playerHand = Hand(2, deck)
-        opponent1Hand = Hand(2, deck)
-        opponent2Hand = Hand(2, deck)
-        opponent3Hand = Hand(2, deck)
+    # Continue playing until user wants to quit
+    while (play != 'no'):
+        print("Game Started")
+        # Evaluate next game step
+        play = game.NextGameStep()
 
-        # Burn
-
+    # After user selects to quit playing, prompt user to save game
+    game.SaveGame()
+    chips.SaveChips()
+    
+play()

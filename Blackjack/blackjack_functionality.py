@@ -1,3 +1,4 @@
+# blackjack_functionality.py
 # Print the player's hand
 def playerShow(playerHand):
     print("Player's hand: ")
@@ -70,7 +71,7 @@ def bustChecker(score):
 def contGame():
     cont = input("Would you like to continue a saved game? (yes or no) ")
     if (cont):
-        readGame = open("saved.txt", "r+")
+        readGame = open("saved_blackjack.txt", "r+")
         return readGame
     else:
         return 0
