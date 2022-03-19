@@ -16,14 +16,16 @@ class GameStruct:
         self.reveal3 = "Reveal3"
         self.end = "End"
 
+# Handles General Game Flow and Stores Game State
 class GameState:
-    def __init__(self):
+    def __init__(self, window):
         self.gameStruct = GameStruct()
-        cont = input("Would you like to continue a previously saved game? ('yes' or 'no') ")
-        if (cont == 'yes'):
-            self.LoadGame()
-        elif (cont == 'no'):
-            self.NewGame()
+        cont = window.AddPrompt('Test', ['Load Game', 'New Game', 'Options'])
+        #cont = input("Would you like to continue a previously saved game? ('yes' or 'no') ")
+        if (cont == 'Load Game'):
+            self.LoadGame(window)
+        elif (cont == 'New Game'):
+            self.NewGame(window)
         else:
             print("Invalid input")
 
@@ -35,7 +37,7 @@ class GameState:
         saveString += str(self.playerHand) + '\n' + str(self.opponent1Hand) + '\n' + str(self.opponent2Hand) + '\n' + str(self.opponent3Hand) + '\n' + str(self.playedCards) + '\n' + str(self.burnPile) + '\n' + str(self.deck)
         return saveString
 
-    def LoadGame(self):
+    def LoadGame(self, window):
         # Read in Saved Game File
         readGame = open("saved_poker.txt", "r+")
         readLines = [line.rstrip().split(',') for line in readGame]
@@ -80,7 +82,7 @@ class GameState:
         self.DetermineStatus()
         
     # Begin New Game
-    def NewGame(self):
+    def NewGame(self, window):
         # Initializing New Deck to Play With
         self.deck = Deck(True)
         self.deck.shuffle()
@@ -99,11 +101,11 @@ class GameState:
         self.currentGameStatus = self.gameStruct.begin
 
     # Save In Progress Game
-    def SaveGame(self):
-        overwrite = 'yes'
-        if (os.path.isfile('saved_poker.txt')):
-            overwrite = input("Are you sure you would like to overwrite your previously saved game? ('yes' or 'no') ")  
-        if (overwrite == 'yes'):
+    def SaveGame(self, window):
+        overwrite = 'Yes'
+        if (os.path.isfile('saved_poker.txt')): 
+            overwrite = window.AddPrompt("Are you sure you would like to overwrite your previously saved game?", ['Yes', 'No'])
+        if (overwrite == 'Yes'):
             with open('saved_poker.txt', 'w') as savefile:
                 savefile.write(str(self))
 
@@ -129,7 +131,7 @@ class GameState:
                 self.currentGameStatus = self.gameStruct.reveal3
 
     # Execute Next Game Step
-    def NextGameStep(self):
+    def NextGameStep(self, window):
         finalReveal = False
         if (self.currentGameStatus == self.gameStruct.begin):
             # First Burn
@@ -161,8 +163,8 @@ class GameState:
             self.currentGameStatus = self.gameStruct.end
         elif (self.currentGameStatus == self.gameStruct.end):
             # Game Finished and Results Displayed. Ask To Begin New Game
-            cont = input("Would you like to begin a new game? ('yes' or 'no') ")
-            if (cont == 'yes'):
+            cont = window.AddPrompt("Would you like to begin a new game?", ['Yes', 'No'])
+            if (cont == 'Yes'):
                 self.NewGame()           
             return cont
         else:
@@ -171,7 +173,7 @@ class GameState:
         # End of Stage Output - Shows Players Hand and Revealed Cards
         print("New Stage " + self.currentGameStatus)
         self.PrintResult(finalReveal)
-        cont = input("Would you like to continue playing? ('yes' or 'no') ")
+        cont = window.AddPrompt("Would you like to continue playing?", ['Yes', 'No'])
         return cont
 
     # Burn a Card

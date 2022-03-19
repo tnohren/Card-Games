@@ -44,3 +44,17 @@ class PokerChipHandler:
             self.opponent1Chips = Purse(int(readLines[2][0]), int(readLines[2][1]), int(readLines[2][2]), int(readLines[2][3]))
             self.opponent2Chips = Purse(int(readLines[3][0]), int(readLines[3][1]), int(readLines[3][2]), int(readLines[3][3]))
             self.opponent3Chips = Purse(int(readLines[4][0]), int(readLines[4][1]), int(readLines[4][2]), int(readLines[4][3]))
+
+    # Handles Placing Bets
+    def PlaceBets(self):
+        self.PlayerBet()
+        for opp in [self.opponent1Chips, self.opponent2Chips, self.opponent3Chips]:
+            self.HandleOpponentBet(opp)
+
+    # Allow Player to Place Bet
+    def PlayerBet(self):
+        return
+
+    # Automatically Handle Opponent Bets
+    def HandleOpponentBet(self):
+        return
