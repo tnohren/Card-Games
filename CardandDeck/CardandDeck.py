@@ -77,7 +77,7 @@ class Hand:
         for card in self.hd:
             printhand.append(card.FormattedPrint())
         if len(printhand) > 0:
-            return '\n'.join(printhand)
+            return ','.join(printhand)
         else:
             return ''
 

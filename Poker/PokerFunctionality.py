@@ -20,7 +20,7 @@ class GameStruct:
 class GameState:
     def __init__(self, window):
         self.gameStruct = GameStruct()
-        cont = window.AddPrompt('Test', ['Load Game', 'New Game', 'Options'])
+        cont = window.AddPrompt(['Welcome to Poker'], ['Load Game', 'New Game', 'Options'])
         #cont = input("Would you like to continue a previously saved game? ('yes' or 'no') ")
         if (cont == 'Load Game'):
             self.LoadGame(window)
@@ -32,7 +32,7 @@ class GameState:
     def __str__(self):
         # Format string for saving
         # First line contains number of cards in the deck, number of cards that have been revealed, and the number of cards in the burn pile.
-        # Each subsequent line is a unique card: first is the player's hand, then the opponents hands, then revealed cards, then burned cards, and finally cards remaining in the deck.
+        # Each subsequent line is a unique card: first is the player's hand, then the opponents' hands, then revealed cards, then burned cards, and finally cards remaining in the deck.
         saveString = str(len(self.deck)) + ',' + str(len(self.playedCards)) + ',' + str(len(self.burnPile)) + '\n'
         saveString += str(self.playerHand) + '\n' + str(self.opponent1Hand) + '\n' + str(self.opponent2Hand) + '\n' + str(self.opponent3Hand) + '\n' + str(self.playedCards) + '\n' + str(self.burnPile) + '\n' + str(self.deck)
         return saveString
@@ -104,7 +104,7 @@ class GameState:
     def SaveGame(self, window):
         overwrite = 'Yes'
         if (os.path.isfile('saved_poker.txt')): 
-            overwrite = window.AddPrompt("Are you sure you would like to overwrite your previously saved game?", ['Yes', 'No'])
+            overwrite = window.AddPrompt(["Are you sure you would like to overwrite your previously saved game?"], ['Yes', 'No'])
         if (overwrite == 'Yes'):
             with open('saved_poker.txt', 'w') as savefile:
                 savefile.write(str(self))
@@ -163,9 +163,9 @@ class GameState:
             self.currentGameStatus = self.gameStruct.end
         elif (self.currentGameStatus == self.gameStruct.end):
             # Game Finished and Results Displayed. Ask To Begin New Game
-            cont = window.AddPrompt("Would you like to begin a new game?", ['Yes', 'No'])
+            cont = window.AddPrompt(["Would you like to begin a new game?"], ['Yes', 'No'])
             if (cont == 'Yes'):
-                self.NewGame()           
+                self.NewGame(window)           
             return cont
         else:
             print("Exception Caught - Invalid Game Status")
@@ -173,7 +173,7 @@ class GameState:
         # End of Stage Output - Shows Players Hand and Revealed Cards
         print("New Stage " + self.currentGameStatus)
         self.PrintResult(finalReveal)
-        cont = window.AddPrompt("Would you like to continue playing?", ['Yes', 'No'])
+        cont = window.AddPrompt(["Your Cards: " + self.playerHand.FormattedPrint(), "Revealed Cards: " + self.playedCards.FormattedPrint(), "Would you like to continue playing?"], ['Yes', 'No'])
         return cont
 
     # Burn a Card
