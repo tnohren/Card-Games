@@ -28,6 +28,8 @@ class GameState:
             self.NewGame(window)
         else:
             print("Invalid input")
+            window.Quit()
+            quit()
 
     def __str__(self):
         # Format string for saving
@@ -58,25 +60,25 @@ class GameState:
         for i in range(1, len(readLines)):
             # Player Hand Saved First
             if (i == 1 or i == 2):
-                self.playerHand.addCard(Card(readLines[i][1], readLines[i][0]))
+                self.playerHand.AddCard(Card(readLines[i][1], readLines[i][0]))
             # Opponent 1 Hand Saved Second
             elif (i == 3 or i == 4):
-                self.opponent1Hand.addCard(Card(readLines[i][1], readLines[i][0]))
+                self.opponent1Hand.AddCard(Card(readLines[i][1], readLines[i][0]))
             # Opponent 2 Hand Saved Third
             elif (i == 5 or i == 6):
-                self.opponent2Hand.addCard(Card(readLines[i][1], readLines[i][0]))
+                self.opponent2Hand.AddCard(Card(readLines[i][1], readLines[i][0]))
             # Opponent 3 Hand Saved Fourth
             elif (i == 7 or i == 8):
-                self.opponent3Hand.addCard(Card(readLines[i][1], readLines[i][0]))
+                self.opponent3Hand.AddCard(Card(readLines[i][1], readLines[i][0]))
             # Played Cards Saved Fifth
             elif (i >= 9 and (i <= 8 + currentPlayedSize)):
-                self.playedCards.addCard(Card(readLines[i][1], readLines[i][0]))
+                self.playedCards.AddCard(Card(readLines[i][1], readLines[i][0]))
             # Burned Cards Saved Sixth
             elif ((i >= len(readLines) - currentDeckSize - currentBurnSize) and (i <= (len(readLines) - currentDeckSize - 1))):
-                self.burnPile.addCard(Card(readLines[i][1], readLines[i][0]))
+                self.burnPile.AddCard(Card(readLines[i][1], readLines[i][0]))
             # Deck Saved Last
             elif (currentDeckSize != 0 and i >= len(readLines) - currentDeckSize):
-                self.deck.addCard(Card(readLines[i][1], readLines[i][0]))
+                self.deck.AddCard(Card(readLines[i][1], readLines[i][0]))
 
         # Determine Game Status
         self.DetermineStatus()

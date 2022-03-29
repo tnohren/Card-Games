@@ -47,7 +47,7 @@ class Deck:
     def draw(self):
         return self.dk.pop(-1)
 
-    def addCard(self, newCard):
+    def AddCard(self, newCard):
         self.dk.append(newCard)
 
 # Hand class --- holds a certain number of cards based on the type of game played
@@ -81,5 +81,5 @@ class Hand:
         else:
             return ''
 
-    def addCard(self, newCard):
+    def AddCard(self, newCard):
         self.hd.append(newCard)
