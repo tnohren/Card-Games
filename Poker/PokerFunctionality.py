@@ -180,12 +180,12 @@ class GameState:
 
     # Burn a Card
     def BurnCard(self):
-        self.burnPile.addCard(self.deck.draw())
+        self.burnPile.AddCard(self.deck.draw())
 
     # Reveal a Card
     def RevealCards(self, num):
         for i in range(num):
-            self.playedCards.addCard(self.deck.draw())
+            self.playedCards.AddCard(self.deck.draw())
 
     # Display Final Results
     def PrintResult(self, finalReveal):

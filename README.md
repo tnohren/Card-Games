@@ -14,10 +14,8 @@ Work in Progress for Implementing a betting/currency system
 # BlackJack
 Just updated to include most functionality as functions.
 To-Dos:
-  1. Re-configure Game State using Poker as a model
-  2. Saved game functionality
-  3. Implement Betting
-  4. Multiple player support
+  1. Implement Betting
+  2. Multiple player support
 
 # Poker
 Game flow is completed.
