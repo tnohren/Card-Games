@@ -50,7 +50,7 @@ class GameState:
 
 	def LoadGame(self, window, database):
 		# Retrieve List of Saved Games
-		savedGames = database.LoadGamesList(self.playerName, "Blackjack", False)
+		savedGames = database.LoadGamesList(self.playerName, "Poker", False)
 		
 		if (len(savedGames) == 0):
 			window.AddPrompt(["You have no saved games. Please start a new game."], ["New Game"])
@@ -59,11 +59,10 @@ class GameState:
 			# Ask User Which Saved Game to Play
 			self.gameNumber = int(window.AddPrompt(["Which save game would you like to continue playing?"], savedGames))
 			game = database.LoadGame(self.playerName, "Blackjack", self.gameNumber)
-			print(str(game))
+			
 			self.gameState = game[0]
 			cardPiles = game[1]
-			print(self.gameState)
-			print(cardPiles)
+
 			self.playerHand = Hand()
 			self.dealerHand = Hand()
 			self.deck = Deck(False)
@@ -71,7 +70,7 @@ class GameState:
 			for i in range(0, len(cardPiles)):
 				if (cardPiles[i][0] == "Player"):
 					self.playerHand.AddCard(Card(int(cardPiles[i][1]), int(cardPiles[i][2])))
-				if (cardPiles[i][0] == "Opponent1"):
+				elif (cardPiles[i][0] == "Opponent1"):
 					self.dealerHand.AddCard(Card(int(cardPiles[i][1]), int(cardPiles[i][2])))
 				else:
 					self.deck.AddCard(Card(int(cardPiles[i][1]), int(cardPiles[i][2])))
@@ -93,7 +92,7 @@ class GameState:
 		self.dealerScore = self.CalcDealerScore()
 
 		self.gameState = self.gameStruct.playerTurn
-		self.gameNumber = int(database.SaveGame(self.playerName, "Blackjack", self.gameStruct.playerTurn, [self.playerHand, self.dealerHand], self.deck))
+		self.gameNumber = int(database.SaveGame(self.playerName, "Poker", self.gameStruct.playerTurn, [self.playerHand, self.dealerHand], self.deck))
 
 	def PlayerTurn(self, window, database):
 		playerChoice = 'Hit'

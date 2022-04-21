@@ -1,8 +1,1 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
-
-/saved_poker.txt
-/saved_poker_chips.txt
-/saved_blackjack.txt
-/app_db.sqlite
+﻿/app_db.sqlite

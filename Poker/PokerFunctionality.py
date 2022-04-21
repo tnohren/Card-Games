@@ -14,18 +14,19 @@ class GameStruct:
         self.reveal2 = "Reveal2"
         self.burn3 = "Burn3"
         self.reveal3 = "Reveal3"
-        self.end = "End"
+        self.end = "Complete"
 
 # Handles General Game Flow and Stores Game State
 class GameState:
-    def __init__(self, window):
+    def __init__(self, window, database, playerName):
+        self.playerName = playerName
         self.gameStruct = GameStruct()
         cont = window.AddPrompt(['Welcome to Poker'], ['Load Game', 'New Game', 'Options'])
         #cont = input("Would you like to continue a previously saved game? ('yes' or 'no') ")
         if (cont == 'Load Game'):
-            self.LoadGame(window)
+            self.LoadGame(window, database)
         elif (cont == 'New Game'):
-            self.NewGame(window)
+            self.NewGame(window, database)
         else:
             print("Invalid input")
             window.Quit()
@@ -39,52 +40,50 @@ class GameState:
         saveString += str(self.playerHand) + '\n' + str(self.opponent1Hand) + '\n' + str(self.opponent2Hand) + '\n' + str(self.opponent3Hand) + '\n' + str(self.playedCards) + '\n' + str(self.burnPile) + '\n' + str(self.deck)
         return saveString
 
-    def LoadGame(self, window):
-        # Read in Saved Game File
-        readGame = open("saved_poker.txt", "r+")
-        readLines = [line.rstrip().split(',') for line in readGame]
-        currentDeckSize = int(readLines[0][0])
-        currentPlayedSize = int(readLines[0][1])
-        currentBurnSize = int(readLines[0][2])
+    def LoadGame(self, window, database):
+        savedGames = database.LoadGamesList(self.playerName, "Poker", False)
 
-        # Initialize Game Pieces
-        self.playerHand = Hand()
-        self.opponent1Hand = Hand()
-        self.opponent2Hand = Hand()
-        self.opponent3Hand = Hand()
-        self.playedCards = Hand()
-        self.burnPile = Hand()
-        self.deck = Deck(False)
+        if (len(savedGames) == 0):
+            window.AddPrompt(["You have no saved games. Please start a new game."], ["New Game"])
+            self.NewGame(window, database)
+        else:
+            # Ask user which game to continue playing
+            self.gameNumber = int(window.AddPrompt(["Which save game would you like to continue playing?"], savedGames))
+            game = database.LoadGame(self.playerName, "Poker", self.gameNumber)
+			
+            # Set Current Game Status
+            self.currentGameStatus = game[0]
 
-        # Read Saved Game Data
-        for i in range(1, len(readLines)):
-            # Player Hand Saved First
-            if (i == 1 or i == 2):
-                self.playerHand.AddCard(Card(readLines[i][1], readLines[i][0]))
-            # Opponent 1 Hand Saved Second
-            elif (i == 3 or i == 4):
-                self.opponent1Hand.AddCard(Card(readLines[i][1], readLines[i][0]))
-            # Opponent 2 Hand Saved Third
-            elif (i == 5 or i == 6):
-                self.opponent2Hand.AddCard(Card(readLines[i][1], readLines[i][0]))
-            # Opponent 3 Hand Saved Fourth
-            elif (i == 7 or i == 8):
-                self.opponent3Hand.AddCard(Card(readLines[i][1], readLines[i][0]))
-            # Played Cards Saved Fifth
-            elif (i >= 9 and (i <= 8 + currentPlayedSize)):
-                self.playedCards.AddCard(Card(readLines[i][1], readLines[i][0]))
-            # Burned Cards Saved Sixth
-            elif ((i >= len(readLines) - currentDeckSize - currentBurnSize) and (i <= (len(readLines) - currentDeckSize - 1))):
-                self.burnPile.AddCard(Card(readLines[i][1], readLines[i][0]))
-            # Deck Saved Last
-            elif (currentDeckSize != 0 and i >= len(readLines) - currentDeckSize):
-                self.deck.AddCard(Card(readLines[i][1], readLines[i][0]))
+            # Initialize and build all card piles - hands, played cards, burn pile, deck
+            cardPiles = game[1]
+            self.playerHand = Hand()
+            self.opponent1Hand = Hand()
+            self.opponent2Hand = Hand()
+            self.opponent3Hand = Hand()
+            self.playedCards = Hand()
+            self.burnPile = Hand()
+            self.deck = Deck(False)
+            for i in range(0, len(cardPiles)):
+                if (cardPiles[i][0] == "Player"):
+                    self.playerHand.AddCard(Card(int(cardPiles[i][1]), int(cardPiles[i][2])))
+                elif (cardPiles[i][0] == "Opponent1"):
+                    self.opponent1Hand.AddCard(Card(int(cardPiles[i][1]), int(cardPiles[i][2])))
+                elif (cardPiles[i][0] == "Opponent2"):
+                    self.opponent2Hand.AddCard(Card(int(cardPiles[i][1]), int(cardPiles[i][2])))
+                elif (cardPiles[i][0] == "Opponent3"):
+                    self.opponent3Hand.AddCard(Card(int(cardPiles[i][1]), int(cardPiles[i][2])))
+                elif (cardPiles[i][0] == "Opponent4"):
+                    self.burnPile.AddCard(Card(int(cardPiles[i][1]), int(cardPiles[i][2])))
+                elif (cardPiles[i][0] == "Opponent5"):
+                    self.playedCards.AddCard(Card(int(cardPiles[i][1]), int(cardPiles[i][2])))
+                else:
+                    self.deck.AddCard(Card(int(cardPiles[i][1]), int(cardPiles[i][2])))
 
-        # Determine Game Status
-        self.DetermineStatus()
+            print("PARSED CARD PILES: ")
+            print([self.playerHand, self.opponent1Hand, self.opponent2Hand, self.opponent3Hand, self.burnPile, self.playedCards])
         
     # Begin New Game
-    def NewGame(self, window):
+    def NewGame(self, window, database):
         # Initializing New Deck to Play With
         self.deck = Deck(True)
         self.deck.shuffle()
@@ -101,15 +100,11 @@ class GameState:
         
         # Set Game Status
         self.currentGameStatus = self.gameStruct.begin
+        self.gameNumber = int(database.SaveGame(self.playerName, "Poker", self.currentGameStatus, [self.playerHand, self.opponent1Hand, self.opponent2Hand, self.opponent3Hand, self.burnPile, self.playedCards], self.deck))
 
     # Save In Progress Game
-    def SaveGame(self, window):
-        overwrite = 'Yes'
-        if (os.path.isfile('saved_poker.txt')): 
-            overwrite = window.AddPrompt(["Are you sure you would like to overwrite your previously saved game?"], ['Yes', 'No'])
-        if (overwrite == 'Yes'):
-            with open('saved_poker.txt', 'w') as savefile:
-                savefile.write(str(self))
+    def SaveGame(self, database):
+        database.SaveGame(self.playerName, "Poker", self.currentGameStatus, [self.playerHand, self.opponent1Hand, self.opponent2Hand, self.opponent3Hand, self.burnPile, self.playedCards], self.deck, self.gameNumber)
 
     # Determine Game Status
     def DetermineStatus(self):
@@ -133,7 +128,7 @@ class GameState:
                 self.currentGameStatus = self.gameStruct.reveal3
 
     # Execute Next Game Step
-    def NextGameStep(self, window):
+    def NextGameStep(self, window, database):
         finalReveal = False
         if (self.currentGameStatus == self.gameStruct.begin):
             # First Burn
@@ -167,7 +162,7 @@ class GameState:
             # Game Finished and Results Displayed. Ask To Begin New Game
             cont = window.AddPrompt(["Would you like to begin a new game?"], ['Yes', 'No'])
             if (cont == 'Yes'):
-                self.NewGame(window)           
+                self.NewGame(window, database)           
             return cont
         else:
             print("Exception Caught - Invalid Game Status")
@@ -175,6 +170,7 @@ class GameState:
         # End of Stage Output - Shows Players Hand and Revealed Cards
         print("New Stage " + self.currentGameStatus)
         self.PrintResult(finalReveal)
+        self.SaveGame(database)
         cont = window.AddPrompt(["Your Cards: " + self.playerHand.FormattedPrint(), "Revealed Cards: " + self.playedCards.FormattedPrint(), "Would you like to continue playing?"], ['Yes', 'No'])
         return cont
 
