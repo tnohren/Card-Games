@@ -26,7 +26,7 @@ class GameState:
 		elif (cont == 'New Game'):
 			self.NewGame(window, database)
 		elif (cont == 'Options'):
-			print ("OPTIONS - FILL OUT")
+			print("OPTIONS - FILL OUT")
 		else:
 			print("Invalid input")
 			window.Quit()

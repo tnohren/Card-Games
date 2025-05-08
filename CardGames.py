@@ -4,11 +4,10 @@ sys.path.append('./Blackjack')
 sys.path.append('./Poker')
 sys.path.append('./Currency')
 sys.path.append('./Database')
-from PrimaryWindow import *
-from Poker import *
-from Blackjack import *
-from Currency import *
-from MainDatabase import *
+from PrimaryWindow import Window
+from Poker import PokerGame
+from Blackjack import BlackjackGame
+from Database import DB
 
 def play():
     # Initialize Chips
@@ -18,7 +17,7 @@ def play():
     window = Window()
 
     # Initialize Database
-    database = MainDatabase("app_db.sqlite")
+    database = DB("app_db.sqlite")
 
     # Retrieve List of Profiles
     profiles = database.ExecuteSelectQuery(database.dynamicTables.SelectProfile())
@@ -53,9 +52,9 @@ def play():
     # Ask User Which Game They Would Like to Play
     gameType = window.AddPrompt(["Which card game would you like to play?"], gameTypes)
     if gameType == 'Blackjack':
-        game = Blackjack(window, database, profileChoice)
+        game = BlackjackGame(window, database, profileChoice)
     elif gameType == 'Poker':
-        game = Poker(window, database, profileChoice)
+        game = PokerGame(window, database, profileChoice)
     else:
         print("Invalid input")
 
